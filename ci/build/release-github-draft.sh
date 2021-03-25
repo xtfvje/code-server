@@ -10,7 +10,7 @@ main() {
   hub release create \
     --file - \
     -t "$(git rev-parse HEAD)" \
-    --draft "v$VERSION" << EOF
+    --draft "v$VERSION" <<EOF
 v$VERSION
 
 VS Code v$(vscode_version)
@@ -22,6 +22,9 @@ installations.
 ## New Features
 
   - ⭐ Summarize new features here with references to issues
+
+## VS Code
+  - ⭐ Summarize VS Code version update here with references to issues
 
 ## Bug Fixes
   - ⭐ Summarize bug fixes here with references to issues

@@ -1,5 +1,5 @@
 import { field, Level, logger } from "@coder/logger"
-import * as fs from "fs-extra"
+import { promises as fs } from "fs"
 import yaml from "js-yaml"
 import * as os from "os"
 import * as path from "path"
@@ -56,7 +56,6 @@ export interface Args extends VsArgs {
   "new-window"?: boolean
 
   link?: OptionalString
-  home?: string
 }
 
 interface Option<T> {
@@ -195,15 +194,11 @@ const options: Options<Required<Args>> = {
   link: {
     type: OptionalString,
     description: `
-      Securely bind code-server via Coder Cloud with the passed name. You'll get a URL like
-      https://myname.coder-cloud.com at which you can easily access your code-server instance.
+      Securely bind code-server via our cloud service with the passed name. You'll get a URL like
+      https://hostname-username.cdr.co at which you can easily access your code-server instance.
       Authorization is done via GitHub.
     `,
     beta: true,
-  },
-  home: {
-    type: "string",
-    description: "Set a custom link for the 'Go Home' button in the Application Menu",
   },
 }
 
@@ -385,7 +380,6 @@ export async function setDefaults(cliArgs: Args, configArgs?: ConfigArgs): Promi
   const args = Object.assign({}, configArgs || {}, cliArgs)
 
   if (!args["user-data-dir"]) {
-    await copyOldMacOSDataDir()
     args["user-data-dir"] = paths.data
   }
 
@@ -510,13 +504,22 @@ export async function readConfigFile(configPath?: string): Promise<ConfigArgs> {
     }
   }
 
-  if (!(await fs.pathExists(configPath))) {
-    await fs.outputFile(configPath, await defaultConfigFile())
+  await fs.mkdir(path.dirname(configPath), { recursive: true })
+
+  try {
+    await fs.writeFile(configPath, await defaultConfigFile(), {
+      flag: "wx", // wx means to fail if the path exists.
+    })
     logger.info(`Wrote default config file to ${humanPath(configPath)}`)
+  } catch (error) {
+    // EEXIST is fine; we don't want to overwrite existing configurations.
+    if (error.code !== "EEXIST") {
+      throw error
+    }
   }
 
-  const configFile = await fs.readFile(configPath)
-  return parseConfigFile(configFile.toString(), configPath)
+  const configFile = await fs.readFile(configPath, "utf8")
+  return parseConfigFile(configFile, configPath)
 }
 
 /**
@@ -528,7 +531,7 @@ export function parseConfigFile(configFile: string, configPath: string): ConfigA
     return { _: [], config: configPath }
   }
 
-  const config = yaml.safeLoad(configFile, {
+  const config = yaml.load(configFile, {
     filename: configPath,
   })
   if (!config || typeof config === "string") {
@@ -597,21 +600,6 @@ function bindAddrFromAllSources(...argsConfig: Args[]): Addr {
   }
 
   return addr
-}
-
-async function copyOldMacOSDataDir(): Promise<void> {
-  if (os.platform() !== "darwin") {
-    return
-  }
-  if (await fs.pathExists(paths.data)) {
-    return
-  }
-
-  // If the old data directory exists, we copy it in.
-  const oldDataDir = path.join(os.homedir(), "Library/Application Support", "code-server")
-  if (await fs.pathExists(oldDataDir)) {
-    await fs.copy(oldDataDir, paths.data)
-  }
 }
 
 export const shouldRunVsCodeCli = (args: Args): boolean => {

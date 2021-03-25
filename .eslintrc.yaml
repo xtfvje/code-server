@@ -16,7 +16,6 @@ extends:
   - plugin:import/typescript
   - plugin:prettier/recommended
   - prettier # Removes eslint rules that conflict with prettier.
-  - prettier/@typescript-eslint # Remove conflicts again.
 
 rules:
   # Sometimes you need to add args to implement a function signature even
@@ -30,6 +29,7 @@ rules:
   "@typescript-eslint/no-var-requires": off
   "@typescript-eslint/explicit-module-boundary-types": off
   "@typescript-eslint/no-explicit-any": off
+  "@typescript-eslint/no-extra-semi": off
   eqeqeq: error
   import/order:
     [error, { alphabetize: { order: "asc" }, groups: [["builtin", "external", "internal"], "parent", "sibling"] }]

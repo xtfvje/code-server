@@ -9,12 +9,13 @@
 - [Debian, Ubuntu](#debian-ubuntu)
 - [Fedora, CentOS, RHEL, SUSE](#fedora-centos-rhel-suse)
 - [Arch Linux](#arch-linux)
+- [Termux](#termux)
 - [yarn, npm](#yarn-npm)
 - [macOS](#macos)
 - [Standalone Releases](#standalone-releases)
 - [Docker](#docker)
 - [helm](#helm)
-- [App Engines (Azure, Heroku)](#app-engines-azure-heroku)
+- [Cloud Providers](#cloud-providers)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -88,8 +89,8 @@ commands presented in the rest of this document.
 ## Debian, Ubuntu
 
 ```bash
-curl -fOL https://github.com/cdr/code-server/releases/download/v3.9.0/code-server_3.9.0_amd64.deb
-sudo dpkg -i code-server_3.9.0_amd64.deb
+curl -fOL https://github.com/cdr/code-server/releases/download/v3.9.1/code-server_3.9.1_amd64.deb
+sudo dpkg -i code-server_3.9.1_amd64.deb
 sudo systemctl enable --now code-server@$USER
 # Now visit http://127.0.0.1:8080. Your password is in ~/.config/code-server/config.yaml
 ```
@@ -97,8 +98,8 @@ sudo systemctl enable --now code-server@$USER
 ## Fedora, CentOS, RHEL, SUSE
 
 ```bash
-curl -fOL https://github.com/cdr/code-server/releases/download/v3.9.0/code-server-3.9.0-amd64.rpm
-sudo rpm -i code-server-3.9.0-amd64.rpm
+curl -fOL https://github.com/cdr/code-server/releases/download/v3.9.1/code-server-3.9.1-amd64.rpm
+sudo rpm -i code-server-3.9.1-amd64.rpm
 sudo systemctl enable --now code-server@$USER
 # Now visit http://127.0.0.1:8080. Your password is in ~/.config/code-server/config.yaml
 ```
@@ -120,6 +121,18 @@ makepkg -si
 sudo systemctl enable --now code-server@$USER
 # Now visit http://127.0.0.1:8080. Your password is in ~/.config/code-server/config.yaml
 ```
+
+## Termux
+
+Termux is an Android terminal application and Linux environment, which can also run code-server from your phone.
+
+1. Install Termux from the [Google Play Store](https://play.google.com/store/apps/details?id=com.termux&hl=en_US&gl=US)
+2. Make sure it's up-to-date by running `apt update && apt upgrade`
+3. Install required packages: `apt install build-essential python git nodejs yarn`
+4. Install code-server: `yarn global add code-server`
+5. Run code-server: `code-server` and navigate to localhost:8080 in your browser
+
+To upgrade run: `yarn global upgrade code-server --latest`
 
 ## yarn, npm
 
@@ -168,10 +181,10 @@ Here is an example script for installing and using a standalone `code-server` re
 
 ```bash
 mkdir -p ~/.local/lib ~/.local/bin
-curl -fL https://github.com/cdr/code-server/releases/download/v3.9.0/code-server-3.9.0-linux-amd64.tar.gz \
+curl -fL https://github.com/cdr/code-server/releases/download/v3.9.1/code-server-3.9.1-linux-amd64.tar.gz \
   | tar -C ~/.local/lib -xz
-mv ~/.local/lib/code-server-3.9.0-linux-amd64 ~/.local/lib/code-server-3.9.0
-ln -s ~/.local/lib/code-server-3.9.0/bin/code-server ~/.local/bin/code-server
+mv ~/.local/lib/code-server-3.9.1-linux-amd64 ~/.local/lib/code-server-3.9.1
+ln -s ~/.local/lib/code-server-3.9.1/bin/code-server ~/.local/bin/code-server
 PATH="~/.local/bin:$PATH"
 code-server
 # Now visit http://127.0.0.1:8080. Your password is in ~/.config/code-server/config.yaml
@@ -207,9 +220,8 @@ https://hub.docker.com/r/linuxserver/code-server
 
 See [the chart](../ci/helm-chart).
 
-## App Engines (Azure, Heroku)
+## Cloud Providers
 
-These community images are optimized for use with popular app engines. They use the latest official [Docker](#docker) image, so they will always be up to date.
+We maintain one-click apps and install scripts for different cloud providers such as DigitalOcean, Railway, Heroku, Azure, etc. Check out the repository:
 
-- [code-server-heroku](https://github.com/bpmct/code-server-heroku)
-- [code-server-azure](https://github.com/bpmct/code-server-azure)
+https://github.com/cdr/deploy-code-server
