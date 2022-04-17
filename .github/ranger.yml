@@ -4,7 +4,7 @@ default:
   close:
     # Default time to wait before closing the label. Can either be a number in milliseconds
     # or a string specified by the `ms` package (https://www.npmjs.com/package/ms)
-    delay: "3 days"
+    delay: "2 days"
 
     # Default comment to post when an issue is first marked with a closing label
     comment: "⚠️ This issue has been marked $LABEL and will be closed in $DELAY."
@@ -15,11 +15,15 @@ labels:
   "squash when passing": merge
   "rebase when passing": merge
   "merge when passing": merge
-  stale:
-    action: close
-    delay: 7 days
-    comment: "⚠️ This issue has been marked stale and will automatically be closed in $DELAY."
   "new contributor":
     action: comment
     delay: 5s
     message: "Thanks for making your first contribution! :slightly_smiling_face:"
+  "upstream:vscode":
+    action: close
+    delay: 5s
+    comment: >
+      This issue has been marked as 'upstream:vscode'.
+      Please file this upstream: [link to open issue](https://github.com/microsoft/vscode/issues/new/choose)
+
+      This issue will automatically close in $DELAY.

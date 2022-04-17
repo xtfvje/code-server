@@ -7,10 +7,10 @@ main() {
   cd "$(dirname "$0")/../.."
   source ./ci/lib.sh
 
-  hub release create \
-    --file - \
-    -t "$(git rev-parse HEAD)" \
-    --draft "v$VERSION" <<EOF
+  gh release create "v$VERSION" \
+    --notes-file - \
+    --target "$(git rev-parse HEAD)" \
+    --draft << EOF
 v$VERSION
 
 VS Code v$(vscode_version)
@@ -21,20 +21,27 @@ installations.
 
 ## New Features
 
-  - ⭐ Summarize new features here with references to issues
+⭐ Summarize new features here with references to issues
 
-## VS Code
-  - ⭐ Summarize VS Code version update here with references to issues
+  - item
 
 ## Bug Fixes
-  - ⭐ Summarize bug fixes here with references to issues
+
+⭐ Summarize bug fixes here with references to issues
+
+  - item
 
 ## Documentation
-  - ⭐ Summarize doc changes here with references to issues
+
+⭐ Summarize doc changes here with references to issues
+
+  - item
 
 ## Development
-  - ⭐ Summarize development/testing changes here with references to issues
 
+⭐ Summarize development/testing changes here with references to issues
+
+  - item
 
 Cheers! 🍻
 EOF

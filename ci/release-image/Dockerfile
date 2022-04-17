@@ -1,4 +1,9 @@
-FROM debian:10
+# syntax=docker/dockerfile:experimental
+
+FROM scratch AS packages
+COPY release-packages/code-server*.deb /tmp/
+
+FROM debian:11
 
 RUN apt-get update \
  && apt-get install -y \
@@ -10,11 +15,13 @@ RUN apt-get update \
     man \
     nano \
     git \
+    git-lfs \
     procps \
     openssh-client \
     sudo \
     vim.tiny \
     lsb-release \
+  && git lfs install \
   && rm -rf /var/lib/apt/lists/*
 
 # https://wiki.debian.org/Locale#Manually
@@ -32,9 +39,8 @@ RUN ARCH="$(dpkg --print-architecture)" && \
     mkdir -p /etc/fixuid && \
     printf "user: coder\ngroup: coder\n" > /etc/fixuid/config.yml
 
-COPY release-packages/code-server*.deb /tmp/
 COPY ci/release-image/entrypoint.sh /usr/bin/entrypoint.sh
-RUN dpkg -i /tmp/code-server*$(dpkg --print-architecture).deb && rm /tmp/code-server*.deb
+RUN --mount=from=packages,src=/tmp,dst=/tmp/packages dpkg -i /tmp/packages/code-server*$(dpkg --print-architecture).deb
 
 EXPOSE 8080
 # This way, if someone sets $DOCKER_USER, docker-exec will still work as
